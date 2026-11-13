@@ -11,7 +11,7 @@
 *엔비디아와 한국 주식의 연결고리 그리고 트럼프 발언*  
 2026-11-13 (금) · 📰 Daily
 
-<a href="reports/2026-11-13_daily.pdf"><img src="previews/latest.png" width="520" alt="최신 리포트 미리보기"></a>
+<p><a href="reports/2026-11-13_daily.pdf"><img src="previews/latest-1.png" width="24%" alt="p.1"></a> <a href="reports/2026-11-13_daily.pdf"><img src="previews/latest-2.png" width="24%" alt="p.2"></a> <a href="reports/2026-11-13_daily.pdf"><img src="previews/latest-3.png" width="24%" alt="p.3"></a> <a href="reports/2026-11-13_daily.pdf"><img src="previews/latest-4.png" width="24%" alt="p.4"></a></p>
 
 ## 📚 리포트 목록
 

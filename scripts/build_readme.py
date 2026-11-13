@@ -1,7 +1,7 @@
 """
 reports.json 을 읽어 README.md 를 다시 만듭니다.
 
-- 최신 리포트 1면을 previews/latest.png 로 렌더링해 미리보기로 표시
+- 최신 리포트 앞 4장을 previews/latest-1~4.png 로 렌더링해 미리보기로 표시
 - 리포트 목록은 날짜 내림차순(최신이 맨 위)
 
 사용법
@@ -26,7 +26,8 @@ import pymupdf  # PyMuPDF
 ROOT = Path(__file__).resolve().parent.parent
 DB = ROOT / "reports.json"
 README = ROOT / "README.md"
-PREVIEW = ROOT / "previews" / "latest.png"
+PREVIEW_DIR = ROOT / "previews"
+PREVIEW_PAGES = 4
 
 TYPES = {
     "daily": "📰 Daily",
@@ -56,17 +57,23 @@ def kdate(d):
 
 
 def render_preview(pdf_path):
-    PREVIEW.parent.mkdir(exist_ok=True)
+    """최신 리포트 앞 PREVIEW_PAGES 장을 previews/latest-N.png 로 저장하고 파일명 목록 반환"""
+    PREVIEW_DIR.mkdir(exist_ok=True)
+    for old in PREVIEW_DIR.glob("latest*.png"):
+        old.unlink()
+    names = []
     with pymupdf.open(pdf_path) as doc:
-        pix = doc[0].get_pixmap(dpi=110)
-        pix.save(PREVIEW)
+        for i in range(min(PREVIEW_PAGES, doc.page_count)):
+            name = f"latest-{i + 1}.png"
+            doc[i].get_pixmap(dpi=110).save(PREVIEW_DIR / name)
+            names.append(name)
+    return names
 
 
 def build():
     items = sorted(load(), key=sort_key, reverse=True)
     latest = items[0] if items else None
-    if latest:
-        render_preview(ROOT / latest["file"])
+    pages = render_preview(ROOT / latest["file"]) if latest else []
 
     L = []
     L.append("# QUANTIFI 7시 리포트\n")
@@ -80,7 +87,11 @@ def build():
         if latest.get("subtitle"):
             L.append(f"*{latest['subtitle']}*  ")
         L.append(f"{kdate(latest['date'])} · {TYPES.get(latest['type'], latest['type'])}\n")
-        L.append(f'<a href="{latest["file"]}"><img src="previews/latest.png" width="520" alt="최신 리포트 미리보기"></a>\n')
+        imgs = "".join(
+            f'<a href="{latest["file"]}"><img src="previews/{n}" width="24%" alt="p.{i + 1}"></a> '
+            for i, n in enumerate(pages)
+        )
+        L.append(f"<p>{imgs.strip()}</p>\n")
 
     L.append("## 📚 리포트 목록\n")
     L.append("| 날짜 | 구분 | 제목 |")
