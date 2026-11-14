@@ -1,7 +1,7 @@
 """
 reports.json 을 읽어 README.md 를 다시 만듭니다.
 
-- 최신 리포트 앞 4장을 previews/latest-1~4.png 로 렌더링해 미리보기로 표시
+- 최신 리포트 앞 6장을 previews/latest-1~6.png 로 렌더링해 미리보기로 표시
 - 리포트 목록은 날짜 내림차순(최신이 맨 위)
 
 사용법
@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DB = ROOT / "reports.json"
 README = ROOT / "README.md"
 PREVIEW_DIR = ROOT / "previews"
-PREVIEW_PAGES = 4
+PREVIEW_PAGES = 6
 
 TYPES = {
     "daily": "📰 Daily",
@@ -35,6 +35,15 @@ TYPES = {
     "quant": "📊 퀀트 분석",
 }
 WEEKDAY = "월화수목금토일"
+
+PAGE_GUIDE = [
+    ("p.1", "요약 — 핵심 이슈, 미국·한국 주요 지수, FX·금리·유가, 주요 일정"),
+    ("p.2", "목차"),
+    ("p.3", "미국증시 (US Market)"),
+    ("p.4", "매크로 (Macro)"),
+    ("p.5", "한국증시 — 오늘의 전망 및 전일 장 마감 (Korea Market)"),
+    ("p.6", "외환·상품·채권 동향 (FX · Commodity · Bond)"),
+]
 
 
 def load():
@@ -78,7 +87,12 @@ def build():
     L = []
     L.append("# QUANTIFI 7시 리포트\n")
     L.append("> 매일 아침 07:00 (일요일 제외) · 06:00 미국장 마감 이후 이슈 반영\n")
-    L.append("**구성** : 미국 증시 → 매크로 → 오늘의 한국 주식 전망 및 전일 장 마감 → FICC 동향  ")
+    L.append("**페이지 구성**\n")
+    L.append("| 페이지 | 내용 |")
+    L.append("|---|---|")
+    for pg, desc in PAGE_GUIDE:
+        L.append(f"| {pg} | {desc} |")
+    L.append("")
     L.append("**+α** : 주요 지표 발표 전날 학회원 토론 기반 지수 예측치 · 퀀트 분석(비정기)\n")
 
     if latest:
@@ -88,7 +102,7 @@ def build():
             L.append(f"*{latest['subtitle']}*  ")
         L.append(f"{kdate(latest['date'])} · {TYPES.get(latest['type'], latest['type'])}\n")
         imgs = "".join(
-            f'<a href="{latest["file"]}"><img src="previews/{n}" width="24%" alt="p.{i + 1}"></a> '
+            f'<a href="{latest["file"]}"><img src="previews/{n}" width="32%" alt="p.{i + 1}"></a> '
             for i, n in enumerate(pages)
         )
         L.append(f"<p>{imgs.strip()}</p>\n")
